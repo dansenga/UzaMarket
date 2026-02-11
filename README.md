@@ -1,64 +1,91 @@
-# UzaShop - Plateforme E-commerce C2C
+# 🛒 UzaMarket — Marketplace C2C pour la RDC
 
-UzaShop est une application e-commerce C2C (Consumer to Consumer) développée avec Django, permettant aux particuliers de vendre et d'acheter des produits neufs ou d'occasion.
+**UzaMarket** est une plateforme e-commerce C2C (Consumer-to-Consumer) conçue pour la République Démocratique du Congo. Elle permet aux particuliers d'acheter et de vendre des produits neufs ou d'occasion, avec paiement sécurisé via Mobile Money et Monero (XMR).
+
+## ✨ Fonctionnalités
+
+- **Catalogue produits** — Navigation par catégories, recherche, filtres (prix, état, catégorie)
+- **Système vendeur** — Inscription vendeur, tableau de bord, gestion des produits et commandes
+- **Panier & commandes** — Ajout au panier, checkout, historique des commandes
+- **Paiement Mobile Money** — M-Pesa, Airtel Money, Orange Money, Afri Money
+- **Paiement Monero (XMR)** — Option crypto décentralisée et privée
+- **Messagerie client ↔ vendeur** — Conversations en temps réel liées aux produits
+- **Panneau d'administration** — Gestion utilisateurs, modération produits, suivi commandes
+- **Design Indigo & Amber** — Interface moderne avec animations et preloader
+- **Responsive** — Optimisé mobile, tablette et desktop
+- **Monnaie locale** — Tous les prix en Franc Congolais (FC / CDF)
+
+## 🛠️ Technologies
+
+| Technologie | Version |
+|---|---|
+| Python | 3.12+ |
+| Django | 6.0.2 |
+| Bootstrap | 5.3.2 |
+| HTMX | 1.9.10 |
+| Font Awesome | 6.5.1 |
+| SQLite | 3 (dev) |
 
 ## 🚀 Installation
 
-### Prérequis
-- Python 3.10+
-- pip
-
-### Étapes
-
 ```bash
-# 1. Cloner le projet
-git clone https://github.com/votre-repo/UzaShop.git
+# Cloner le repo
+git clone git@github.com:dansenga/UzaShop.git
 cd UzaShop
 
-# 2. Créer et activer l'environnement virtuel
-python3 -m venv venv
-source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
+# Installer les dépendances
+pip install django django-htmx pillow
 
-# 3. Installer les dépendances
-pip install -r requirements.txt
-
-# 4. Appliquer les migrations
+# Appliquer les migrations
 python manage.py migrate
 
-# 5. Créer un superutilisateur
-python manage.py createsuperuser
+# Charger les données de démo
+python manage.py shell < seed_data.py
 
-# 6. Lancer le serveur
+# Lancer le serveur
 python manage.py runserver
 ```
 
-L'application est accessible sur http://127.0.0.1:8000
+## 👤 Comptes de démonstration
+
+| Rôle | Identifiant | Mot de passe |
+|---|---|---|
+| Admin | `admin` | `admin123` |
+| Vendeur | `vendeur1` | `vendeur123` |
+| Vendeur | `vendeur2` | `vendeur123` |
+| Client | `client1` | `client123` |
 
 ## 📁 Structure du projet
 
 ```
 UzaShop/
-├── accounts/       # Gestion des utilisateurs et rôles
-├── products/       # Catalogue et produits
+├── accounts/       # Auth, profil, rôles (client/vendeur/admin)
+├── products/       # Catalogue, catégories, produits
 ├── cart/           # Panier d'achat
-├── orders/         # Commandes et paiements
+├── orders/         # Commandes, checkout, paiements
 ├── seller/         # Espace vendeur
-├── core/           # Pages générales (accueil, about, contact)
-├── templates/      # Templates HTML
-├── static/         # Fichiers statiques (CSS, JS, images)
-├── media/          # Fichiers uploadés
-└── uzashop/        # Configuration Django
+├── messaging/      # Messagerie client ↔ vendeur
+├── core/           # Pages statiques + panneau admin
+├── templates/      # Templates Django
+├── static/         # CSS, JS, images
+└── uzashop/        # Config Django (settings, urls)
 ```
 
-## 👥 Rôles utilisateurs
+## 🎨 Design System
 
-- **Client** : consulter, acheter des produits
-- **Vendeur** : ajouter/gérer des produits, gérer les commandes reçues
-- **Admin** : accès au panel d'administration Django
+- **Palette** : Indigo (`#6366F1`) & Amber (`#F59E0B`)
+- **Typographies** : Inter (corps) + Playfair Display (titres)
+- **Animations** : Preloader, scroll reveal, hover transitions
+- **Icônes** : Font Awesome 6
 
-## 🛠 Technologies
+## 📍 Contexte
 
-- **Backend** : Django, SQLite
-- **Frontend** : Bootstrap 5, HTMX, Font Awesome
-- **Auth** : Django Authentication System
+Projet conçu pour le marché congolais (RDC) :
+- Fuseau horaire : `Africa/Kinshasa`
+- Langue : Français
+- Monnaie : Franc Congolais (FC)
+- Adresses : Kinshasa, Lubumbashi, etc.
+
+---
+
+🇨🇩 Fait avec ❤️ en RD Congo

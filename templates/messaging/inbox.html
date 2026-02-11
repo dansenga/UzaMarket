@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Messages - UzaMarket{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2 class="section-title"><i class="fas fa-comments me-2"></i>Messagerie</h2>
+            {% if total_unread > 0 %}
+            <span class="badge bg-danger rounded-pill" style="font-size: 0.85rem;">{{ total_unread }} non lu{{ total_unread|pluralize }}</span>
+            {% endif %}
+        </div>
+
+        {% if conversations %}
+        <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+            {% for conv in conversations %}
+            {% with other=conv.get_other_participant:user last_msg=conv.last_message %}
+            <a href="{% url 'messaging:conversation' conversation_id=conv.id %}" class="text-decoration-none">
+                <div class="conversation-item d-flex align-items-center p-3 {% if not forloop.last %}border-bottom{% endif %} {% if conv.unread > 0 %}conversation-unread{% endif %}">
+                    <!-- Avatar -->
+                    <div class="conversation-avatar me-3">
+                        {% if other.avatar %}
+                        <img src="{{ other.avatar.url }}" alt="{{ other.username }}" class="rounded-circle" style="width: 50px; height: 50px; object-fit: cover;">
+                        {% else %}
+                        <div class="avatar-placeholder">
+                            {{ other.username|first|upper }}
+                        </div>
+                        {% endif %}
+                    </div>
+                    <!-- Contenu -->
+                    <div class="flex-grow-1 min-width-0">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold {% if conv.unread > 0 %}text-dark{% else %}text-secondary{% endif %}" style="font-size: 0.95rem;">
+                                {{ other.username }}
+                                {% if other.is_seller %}<i class="fas fa-store ms-1 text-primary" style="font-size: 0.7rem;"></i>{% endif %}
+                            </h6>
+                            <small class="text-muted" style="font-size: 0.75rem;">
+                                {% if last_msg %}{{ last_msg.created_at|timesince }} ago{% endif %}
+                            </small>
+                        </div>
+                        {% if conv.product %}
+                        <small class="d-block text-primary mb-1" style="font-size: 0.75rem;">
+                            <i class="fas fa-tag me-1"></i>{{ conv.product.name|truncatewords:5 }}
+                        </small>
+                        {% endif %}
+                        {% if last_msg %}
+                        <p class="mb-0 text-truncate {% if conv.unread > 0 %}fw-semibold text-dark{% else %}text-muted{% endif %}" style="font-size: 0.85rem;">
+                            {% if last_msg.sender == user %}Vous : {% endif %}{{ last_msg.content|truncatewords:12 }}
+                        </p>
+                        {% endif %}
+                    </div>
+                    <!-- Badge non lu -->
+                    {% if conv.unread > 0 %}
+                    <div class="ms-2">
+                        <span class="badge bg-primary rounded-pill">{{ conv.unread }}</span>
+                    </div>
+                    {% endif %}
+                </div>
+            </a>
+            {% endwith %}
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state py-5">
+            <i class="fas fa-comments fa-4x"></i>
+            <h4>Aucune conversation</h4>
+            <p>Vos conversations avec les vendeurs et acheteurs apparaîtront ici.</p>
+            <a href="{% url 'products:list' %}" class="btn btn-primary">
+                <i class="fas fa-store me-2"></i>Explorer le catalogue
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

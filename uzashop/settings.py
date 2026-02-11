@@ -39,13 +39,14 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party
     "django_htmx",
-    # Apps UzaShop
+    # Apps UzaMarket
     "accounts",
     "products",
     "cart",
     "orders",
     "seller",
     "core",
+    "messaging",
 ]
 
 MIDDLEWARE = [

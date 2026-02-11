@@ -1,5 +1,5 @@
 """
-Script de création de données de démonstration pour UzaShop.
+Script de création de données de démonstration pour UzaMarket.
 Marketplace C2C en République Démocratique du Congo.
 Monnaie : Franc Congolais (FC) — tous les prix sont en CDF.
 
@@ -15,7 +15,7 @@ from accounts.models import User
 from products.models import Category, Product
 from seller.models import SellerProfile
 
-print("\n🚀 === Initialisation des données UzaShop (RDC) === \n")
+print("\n🚀 === Initialisation des données UzaMarket (RDC) === \n")
 
 # ─────────────────────────────────────────────
 # 1. UTILISATEURS
@@ -25,7 +25,7 @@ print("\n🚀 === Initialisation des données UzaShop (RDC) === \n")
 if not User.objects.filter(username="admin").exists():
     User.objects.create_superuser(
         username="admin",
-        email="admin@uzashop.cd",
+        email="admin@uzamarket.cd",
         password="admin123",
         role="admin",
     )
@@ -35,7 +35,7 @@ if not User.objects.filter(username="admin").exists():
 seller1, created = User.objects.get_or_create(
     username="vendeur1",
     defaults={
-        "email": "vendeur1@uzashop.cd",
+        "email": "vendeur1@uzamarket.cd",
         "role": "seller",
         "phone": "+243 81 234 5678",
         "address": "Avenue du Commerce 45, Gombe, Kinshasa",
@@ -57,7 +57,7 @@ if created:
 seller2, created = User.objects.get_or_create(
     username="vendeur2",
     defaults={
-        "email": "vendeur2@uzashop.cd",
+        "email": "vendeur2@uzamarket.cd",
         "role": "seller",
         "phone": "+243 97 876 5432",
         "address": "Boulevard Lumumba 12, Lubumbashi",
@@ -79,7 +79,7 @@ if created:
 client, created = User.objects.get_or_create(
     username="client1",
     defaults={
-        "email": "client1@uzashop.cd",
+        "email": "client1@uzamarket.cd",
         "role": "client",
         "phone": "+243 89 000 1234",
         "address": "Quartier Matonge, Commune de Kalamu, Kinshasa",

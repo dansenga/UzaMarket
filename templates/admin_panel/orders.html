@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block title %}Gestion commandes - UzaMarket{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="section-title"><i class="fas fa-shopping-bag me-2"></i>Toutes les commandes</h2>
+        <p class="text-muted mb-0">{{ orders|length }} commande{{ orders|length|pluralize }}</p>
+    </div>
+    <a href="{% url 'core:admin_dashboard' %}" class="btn btn-outline-secondary btn-sm"><i class="fas fa-arrow-left me-1"></i>Retour</a>
+</div>
+
+<!-- Filtres par statut -->
+<div class="d-flex gap-2 mb-4 flex-wrap">
+    <a href="{% url 'core:admin_orders' %}" class="btn btn-sm {% if not current_status %}btn-primary{% else %}btn-outline-secondary{% endif %}">Toutes</a>
+    <a href="{% url 'core:admin_orders' %}?status=pending" class="btn btn-sm {% if current_status == 'pending' %}btn-warning{% else %}btn-outline-secondary{% endif %}">En attente</a>
+    <a href="{% url 'core:admin_orders' %}?status=confirmed" class="btn btn-sm {% if current_status == 'confirmed' %}btn-info{% else %}btn-outline-secondary{% endif %}">Confirmées</a>
+    <a href="{% url 'core:admin_orders' %}?status=shipped" class="btn btn-sm {% if current_status == 'shipped' %}btn-primary{% else %}btn-outline-secondary{% endif %}">Expédiées</a>
+    <a href="{% url 'core:admin_orders' %}?status=delivered" class="btn btn-sm {% if current_status == 'delivered' %}btn-success{% else %}btn-outline-secondary{% endif %}">Livrées</a>
+    <a href="{% url 'core:admin_orders' %}?status=cancelled" class="btn btn-sm {% if current_status == 'cancelled' %}btn-danger{% else %}btn-outline-secondary{% endif %}">Annulées</a>
+</div>
+
+<div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+    <div class="table-responsive">
+        <table class="table table-hover mb-0">
+            <thead>
+                <tr>
+                    <th>N° Commande</th>
+                    <th>Client</th>
+                    <th>Total (FC)</th>
+                    <th>Paiement</th>
+                    <th>Statut</th>
+                    <th>Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td><strong>{{ order.order_number }}</strong></td>
+                    <td>{{ order.buyer.username }}</td>
+                    <td class="fw-bold" style="color: var(--primary);">{{ order.total_amount|floatformat:0 }}</td>
+                    <td><small>{{ order.get_payment_method_display|default:"-" }}</small></td>
+                    <td>
+                        <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% elif order.status == 'pending' %}warning{% elif order.status == 'shipped' %}info{% else %}primary{% endif %}">
+                            {{ order.get_status_display }}
+                        </span>
+                    </td>
+                    <td><small>{{ order.created_at|date:"d/m/Y H:i" }}</small></td>
+                </tr>
+                {% empty %}
+                <tr><td colspan="6" class="text-center py-4 text-muted">Aucune commande.</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,132 @@
+{% extends "base.html" %}
+
+{% block title %}Administration - UzaMarket{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="section-title"><i class="fas fa-shield-alt me-2"></i>Administration</h2>
+        <p class="text-muted mb-0">Tableau de bord de gestion UzaMarket</p>
+    </div>
+    <div class="d-flex gap-2">
+        <a href="{% url 'core:admin_users' %}" class="btn btn-outline-primary btn-sm"><i class="fas fa-users me-1"></i>Utilisateurs</a>
+        <a href="{% url 'core:admin_products' %}" class="btn btn-outline-primary btn-sm"><i class="fas fa-box me-1"></i>Produits</a>
+        <a href="{% url 'core:admin_orders' %}" class="btn btn-outline-primary btn-sm"><i class="fas fa-shopping-bag me-1"></i>Commandes</a>
+    </div>
+</div>
+
+<!-- Stats principales -->
+<div class="row g-3 mb-4">
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-primary p-3 text-center">
+            <div class="stat-icon mx-auto mb-2" style="background: rgba(99,102,241,0.1); color: var(--primary);"><i class="fas fa-users"></i></div>
+            <div class="stat-value">{{ total_users }}</div>
+            <div class="stat-label">Utilisateurs</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-success p-3 text-center">
+            <div class="stat-icon mx-auto mb-2" style="background: rgba(16,185,129,0.1); color: var(--success);"><i class="fas fa-store"></i></div>
+            <div class="stat-value">{{ total_sellers }}</div>
+            <div class="stat-label">Vendeurs</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-info p-3 text-center">
+            <div class="stat-icon mx-auto mb-2" style="background: rgba(59,130,246,0.1); color: var(--info);"><i class="fas fa-box"></i></div>
+            <div class="stat-value">{{ total_products }}</div>
+            <div class="stat-label">Produits ({{ active_products }} actifs)</div>
+        </div>
+    </div>
+    <div class="col-md-3 col-6">
+        <div class="stat-card stat-warning p-3 text-center">
+            <div class="stat-icon mx-auto mb-2" style="background: rgba(245,158,11,0.1); color: var(--accent);"><i class="fas fa-coins"></i></div>
+            <div class="stat-value">{{ total_revenue|floatformat:0 }}</div>
+            <div class="stat-label">Revenus (FC)</div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats secondaires -->
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+            <div class="card-body p-4 text-center">
+                <div class="display-6 fw-bold text-primary">{{ total_orders }}</div>
+                <p class="text-muted mb-1">Commandes totales</p>
+                <span class="badge bg-warning text-dark">{{ pending_orders }} en attente</span>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+            <div class="card-body p-4 text-center">
+                <div class="display-6 fw-bold" style="color: var(--accent);">{{ total_clients }}</div>
+                <p class="text-muted mb-0">Clients inscrits</p>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card border-0 shadow-sm h-100" style="border-radius: 16px;">
+            <div class="card-body p-4 text-center">
+                <div class="display-6 fw-bold text-success">{{ active_products }}</div>
+                <p class="text-muted mb-0">Produits en ligne</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-4">
+    <!-- Derniers utilisateurs -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center pt-4 px-4 pb-0">
+                <h5 class="fw-bold mb-0" style="font-size: 0.95rem;"><i class="fas fa-user-plus me-2 text-primary"></i>Nouveaux inscrits</h5>
+                <a href="{% url 'core:admin_users' %}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+            </div>
+            <div class="card-body px-4 pb-4">
+                {% for u in recent_users %}
+                <div class="d-flex align-items-center py-2 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="avatar-placeholder me-3" style="width: 36px; height: 36px; font-size: 0.8rem;">{{ u.username|first|upper }}</div>
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0" style="font-size: 0.88rem;">{{ u.username }}</h6>
+                        <small class="text-muted">{{ u.date_joined|date:"d/m/Y" }}</small>
+                    </div>
+                    <span class="badge bg-{% if u.role == 'seller' %}primary{% elif u.role == 'admin' %}danger{% else %}secondary{% endif %}">
+                        {{ u.get_role_display }}
+                    </span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Dernières commandes -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px;">
+            <div class="card-header bg-white border-0 d-flex justify-content-between align-items-center pt-4 px-4 pb-0">
+                <h5 class="fw-bold mb-0" style="font-size: 0.95rem;"><i class="fas fa-shopping-bag me-2 text-primary"></i>Dernières commandes</h5>
+                <a href="{% url 'core:admin_orders' %}" class="btn btn-sm btn-outline-primary">Voir tout</a>
+            </div>
+            <div class="card-body px-4 pb-4">
+                {% for order in recent_orders %}
+                <div class="d-flex align-items-center py-2 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-0" style="font-size: 0.88rem;">{{ order.order_number }}</h6>
+                        <small class="text-muted">{{ order.buyer.username }} · {{ order.created_at|date:"d/m/Y" }}</small>
+                    </div>
+                    <div class="text-end">
+                        <span class="fw-bold" style="color: var(--primary);">{{ order.total_amount|floatformat:0 }} FC</span><br>
+                        <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% elif order.status == 'pending' %}warning{% else %}info{% endif %}" style="font-size: 0.68rem;">
+                            {{ order.get_status_display }}
+                        </span>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="text-center text-muted mb-0">Aucune commande.</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

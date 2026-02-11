@@ -14,7 +14,7 @@ def register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Inscription réussie ! Bienvenue sur UzaShop.")
+            messages.success(request, "Inscription réussie ! Bienvenue sur UzaMarket.")
             return redirect("core:home")
     else:
         form = RegisterForm()
@@ -30,7 +30,7 @@ def seller_register_view(request):
         if form.is_valid():
             user = form.save()
             login(request, user)
-            messages.success(request, "Inscription vendeur réussie ! Bienvenue sur UzaShop.")
+            messages.success(request, "Inscription vendeur réussie ! Bienvenue sur UzaMarket.")
             return redirect("seller:dashboard")
     else:
         form = SellerRegisterForm()

@@ -1,18 +1,22 @@
 {% extends "base.html" %}
 
-{% block title %}Mon profil - UzaShop{% endblock %}
+{% block title %}Mon profil - UzaMarket{% endblock %}
 
 {% block content %}
 <div class="row justify-content-center py-4">
     <div class="col-md-8 col-lg-7">
         <!-- En-tête profil -->
         <div class="text-center mb-4">
-            <div style="width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+            {% if user.avatar %}
+            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="profile-avatar mb-3">
+            {% else %}
+            <div class="profile-avatar-fallback mx-auto mb-3">
                 <i class="fas fa-user text-white fa-2x"></i>
             </div>
+            {% endif %}
             <h2 class="section-title mb-1">Mon profil</h2>
             <div class="mt-2">
-                <span class="badge" style="background: linear-gradient(135deg, var(--primary), var(--primary-dark)); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem;">
+                <span class="badge" style="background: var(--gradient-primary); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem;">
                     {{ user.get_role_display }}
                 </span>
             </div>
