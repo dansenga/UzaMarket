@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Commande {{ order.order_number }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'seller:dashboard' %}">Tableau de bord</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'seller:orders' %}">Commandes</a></li>
+        <li class="breadcrumb-item active">{{ order.order_number }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 fw-bold" style="color: var(--dark);">Vos articles dans cette commande</h5>
+            </div>
+            <div class="card-body">
+                {% for item in seller_items %}
+                <div class="d-flex align-items-center py-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1" style="color: var(--dark);">{{ item.product_name }}</h6>
+                        <small style="color: var(--gray-500);">Quantité : {{ item.quantity }} × {{ item.product_price|floatformat:0 }} FC</small>
+                    </div>
+                    <span class="fw-bold" style="color: var(--primary-dark);">{{ item.subtotal|floatformat:0 }} FC</span>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm mb-3">
+            <div class="card-body p-4">
+                <h5 class="mb-3 fw-bold" style="color: var(--dark);">Informations</h5>
+                <p class="mb-2"><strong>Acheteur :</strong> {{ order.buyer.username }}</p>
+                <p class="mb-2"><strong>Téléphone :</strong> {{ order.phone }}</p>
+                {% if order.mobile_number %}<p class="mb-2"><strong>Mobile Money :</strong> {{ order.mobile_number }}</p>{% endif %}
+                <p class="mb-2"><strong>Adresse :</strong> {{ order.shipping_address }}</p>
+                <p class="mb-2"><strong>Date :</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+                <p class="mb-2"><strong>Paiement :</strong> {{ order.get_payment_method_display|default:order.payment_method }}</p>
+                {% if order.notes %}
+                <p class="mb-2"><strong>Notes :</strong> {{ order.notes }}</p>
+                {% endif %}
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="mb-3 fw-bold" style="color: var(--dark);">Mettre à jour le statut</h5>
+                <p class="mb-2">
+                    Statut actuel :
+                    <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% elif order.status == 'shipped' %}info{% else %}warning{% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </p>
+                <form method="post" action="{% url 'seller:order_update_status' order_number=order.order_number %}">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        <select name="status" class="form-select">
+                            <option value="confirmed" {% if order.status == "confirmed" %}selected{% endif %}>Confirmée</option>
+                            <option value="processing" {% if order.status == "processing" %}selected{% endif %}>En préparation</option>
+                            <option value="shipped" {% if order.status == "shipped" %}selected{% endif %}>Expédiée</option>
+                            <option value="delivered" {% if order.status == "delivered" %}selected{% endif %}>Livrée</option>
+                            <option value="cancelled" {% if order.status == "cancelled" %}selected{% endif %}>Annulée</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sync-alt me-2"></i>Mettre à jour
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

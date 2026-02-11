@@ -1,0 +1,148 @@
+{% extends "base.html" %}
+
+{% block title %}Passer la commande{% endblock %}
+
+{% block content %}
+<h2 class="section-title mb-4"><i class="fas fa-lock me-2"></i>Passer la commande</h2>
+
+<div class="row g-4">
+    <div class="col-lg-7">
+        <form method="post" id="checkout-form">
+            {% csrf_token %}
+
+            <!-- Livraison -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color: var(--dark);"><i class="fas fa-truck me-2" style="color: var(--primary);"></i>Livraison</h5>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.shipping_address.label }}</label>
+                        {{ form.shipping_address }}
+                        {% if form.shipping_address.errors %}
+                        <div class="text-danger small mt-1">{{ form.shipping_address.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">{{ form.phone.label }}</label>
+                        {{ form.phone }}
+                        {% if form.phone.errors %}
+                        <div class="text-danger small mt-1">{{ form.phone.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+
+            <!-- Paiement Mobile Money -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <h5 class="fw-bold mb-3" style="color: var(--dark);"><i class="fas fa-mobile-alt me-2" style="color: var(--primary);"></i>Paiement</h5>
+
+                    {% if form.payment_method.errors %}
+                    <div class="alert alert-danger small mb-3">{{ form.payment_method.errors.0 }}</div>
+                    {% endif %}
+
+                    <div id="payment-methods">
+                        {% for radio in form.payment_method %}
+                        <label class="payment-option" for="{{ radio.id_for_label }}" id="option-{{ radio.id_for_label }}">
+                            {{ radio.tag }}
+                            <div class="payment-icon {% if radio.data.value == 'mpesa' %}mpesa{% elif radio.data.value == 'airtel_money' %}airtel{% elif radio.data.value == 'orange_money' %}orange{% elif radio.data.value == 'afrimoney' %}afrimoney{% else %}cash{% endif %}">
+                                {% if radio.data.value == 'mpesa' %}<i class="fas fa-mobile-alt"></i>
+                                {% elif radio.data.value == 'airtel_money' %}<i class="fas fa-mobile-alt"></i>
+                                {% elif radio.data.value == 'orange_money' %}<i class="fas fa-mobile-alt"></i>
+                                {% elif radio.data.value == 'afrimoney' %}<i class="fas fa-mobile-alt"></i>
+                                {% else %}<i class="fas fa-money-bill-wave"></i>{% endif %}
+                            </div>
+                            <div>
+                                <span class="payment-name">{{ radio.choice_label }}</span>
+                                <span class="payment-desc d-block">
+                                    {% if radio.data.value == 'cash_on_delivery' %}Payez à la réception
+                                    {% else %}Paiement mobile instantané{% endif %}
+                                </span>
+                            </div>
+                        </label>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Numéro Mobile Money -->
+                    <div class="mobile-number-section mt-3" id="mobile-number-section" style="display: none;">
+                        <label class="form-label fw-bold"><i class="fas fa-phone me-1"></i>{{ form.mobile_number.label }}</label>
+                        {{ form.mobile_number }}
+                        {% if form.mobile_number.errors %}
+                        <div class="text-danger small mt-1">{{ form.mobile_number.errors.0 }}</div>
+                        {% endif %}
+                        <p class="small mt-1 mb-0" style="color: var(--gray-500);">{{ form.mobile_number.help_text }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notes -->
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-4">
+                    <div class="mb-0">
+                        <label class="form-label">{{ form.notes.label }}</label>
+                        {{ form.notes }}
+                    </div>
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger">
+                {% for error in form.non_field_errors %}
+                <p class="mb-0">{{ error }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <button type="submit" class="btn btn-primary btn-lg w-100">
+                <i class="fas fa-check-circle me-2"></i>Confirmer la commande — {{ cart.total|floatformat:0 }} FC
+            </button>
+        </form>
+    </div>
+
+    <div class="col-lg-5">
+        <div class="card border-0 shadow-sm" style="position: sticky; top: 90px;">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3" style="color: var(--dark);">Récapitulatif</h5>
+                {% for item in cart.items.all %}
+                <div class="d-flex justify-content-between align-items-center py-2 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div>
+                        <p class="mb-0 fw-bold" style="font-size: 0.9rem; color: var(--dark);">{{ item.product.name|truncatewords:5 }}</p>
+                        <small style="color: var(--gray-500);">{{ item.quantity }} × {{ item.product.price|floatformat:0 }} FC</small>
+                    </div>
+                    <span class="fw-bold" style="color: var(--primary-dark);">{{ item.subtotal|floatformat:0 }} FC</span>
+                </div>
+                {% endfor %}
+                <hr style="border-color: var(--gray-200);">
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Total</span>
+                    <span class="price-tag">{{ cart.total|floatformat:0 }} <span class="currency">FC</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const radios = document.querySelectorAll('input[name="payment_method"]');
+    const mobileSection = document.getElementById('mobile-number-section');
+    const mobileMethods = ['mpesa', 'airtel_money', 'orange_money', 'afrimoney'];
+
+    function updatePaymentUI() {
+        document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('active'));
+        radios.forEach(radio => {
+            if (radio.checked) {
+                radio.closest('.payment-option').classList.add('active');
+                mobileSection.style.display = mobileMethods.includes(radio.value) ? 'block' : 'none';
+            }
+        });
+    }
+
+    radios.forEach(radio => radio.addEventListener('change', updatePaymentUI));
+    updatePaymentUI();
+});
+</script>
+{% endblock %}

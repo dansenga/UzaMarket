@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Connexion - UzaShop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-5 col-lg-4">
+        <div class="auth-card">
+            <!-- En-tête avec icône -->
+            <div class="text-center mb-4">
+                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-sign-in-alt text-white fa-lg"></i>
+                </div>
+                <h3 class="fw-bold mb-1">Bon retour !</h3>
+                <p class="text-muted mb-0">Connectez-vous à votre compte UzaShop</p>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger border-0" style="border-radius: 12px;">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                {% for error in form.non_field_errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold"><i class="fas fa-user me-1 text-muted"></i> Nom d'utilisateur</label>
+                    {{ form.username }}
+                    {% if form.username.errors %}
+                    <div class="text-danger small mt-1"><i class="fas fa-exclamation-triangle me-1"></i>{{ form.username.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold"><i class="fas fa-lock me-1 text-muted"></i> Mot de passe</label>
+                    {{ form.password }}
+                    {% if form.password.errors %}
+                    <div class="text-danger small mt-1"><i class="fas fa-exclamation-triangle me-1"></i>{{ form.password.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100 mb-3" style="padding: 12px; border-radius: 12px; font-weight: 600;">
+                    <i class="fas fa-sign-in-alt me-2"></i>Se connecter
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-3" style="border-top: 1px solid var(--border-color);">
+                <p class="text-muted mb-2">
+                    Pas encore de compte ? <a href="{% url 'accounts:register' %}" class="fw-semibold" style="color: var(--primary);">S'inscrire</a>
+                </p>
+                <p class="text-muted mb-0">
+                    <i class="fas fa-store me-1"></i> Vous êtes vendeur ? <a href="{% url 'accounts:seller_register' %}" class="fw-semibold" style="color: var(--accent);">Inscription vendeur</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

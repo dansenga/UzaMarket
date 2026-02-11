@@ -1,0 +1,63 @@
+{% extends "base.html" %}
+
+{% block title %}Commande {{ order.order_number }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'orders:history' %}">Mes commandes</a></li>
+        <li class="breadcrumb-item active">{{ order.order_number }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-header bg-white">
+                <h5 class="mb-0 fw-bold" style="color: var(--dark);">Commande {{ order.order_number }}</h5>
+            </div>
+            <div class="card-body">
+                {% for item in order.items.all %}
+                <div class="d-flex align-items-center py-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="flex-grow-1">
+                        <h6 class="mb-1" style="color: var(--dark);">{{ item.product_name }}</h6>
+                        <small style="color: var(--gray-500);">Vendeur : {{ item.seller.username|default:"N/A" }} · Quantité : {{ item.quantity }}</small>
+                    </div>
+                    <div class="text-end">
+                        <p class="fw-bold mb-0" style="color: var(--primary-dark);">{{ item.subtotal|floatformat:0 }} FC</p>
+                        <small style="color: var(--gray-500);">{{ item.product_price|floatformat:0 }} FC × {{ item.quantity }}</small>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="mb-3 fw-bold" style="color: var(--dark);">Détails</h5>
+                <p class="mb-2">
+                    <strong>Statut :</strong>
+                    <span class="badge bg-{% if order.status == 'delivered' %}success{% elif order.status == 'cancelled' %}danger{% elif order.status == 'shipped' %}info{% else %}warning{% endif %}">
+                        {{ order.get_status_display }}
+                    </span>
+                </p>
+                <p class="mb-2"><strong>Date :</strong> {{ order.created_at|date:"d/m/Y H:i" }}</p>
+                <p class="mb-2"><strong>Paiement :</strong> {{ order.get_payment_method_display|default:order.payment_method }}</p>
+                {% if order.mobile_number %}<p class="mb-2"><strong>N° Mobile Money :</strong> {{ order.mobile_number }}</p>{% endif %}
+                <p class="mb-2"><strong>Téléphone :</strong> {{ order.phone }}</p>
+                <p class="mb-2"><strong>Adresse :</strong> {{ order.shipping_address }}</p>
+                {% if order.notes %}
+                <p class="mb-2"><strong>Notes :</strong> {{ order.notes }}</p>
+                {% endif %}
+                <hr style="border-color: var(--gray-200);">
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Total</span>
+                    <span class="price-tag">{{ order.total_amount|floatformat:0 }} <span class="currency">FC</span></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

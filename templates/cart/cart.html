@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Mon panier{% endblock %}
+
+{% block content %}
+<h2 class="section-title mb-4"><i class="fas fa-shopping-cart me-2"></i>Mon panier</h2>
+
+{% if cart.items.all %}
+<div class="row g-4">
+    <div class="col-lg-8">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-3 p-md-4">
+                {% for item in cart.items.all %}
+                <div class="row align-items-center py-3 {% if not forloop.last %}border-bottom{% endif %}">
+                    <div class="col-auto">
+                        {% if item.product.display_image %}
+                        <img src="{{ item.product.display_image }}" alt="{{ item.product.name }}" style="width: 80px; height: 80px; object-fit: cover; border-radius: var(--radius-md);">
+                        {% else %}
+                        <div class="d-flex align-items-center justify-content-center" style="width: 80px; height: 80px; background: var(--gray-100); border-radius: var(--radius-md);">
+                            <i class="fas fa-image" style="color: var(--gray-300);"></i>
+                        </div>
+                        {% endif %}
+                    </div>
+                    <div class="col">
+                        <h6 class="mb-1">
+                            <a href="{% url 'products:detail' slug=item.product.slug %}" class="text-decoration-none" style="color: var(--dark);">
+                                {{ item.product.name }}
+                            </a>
+                        </h6>
+                        <p class="small mb-0" style="color: var(--gray-500);">Vendeur : {{ item.product.seller.username }}</p>
+                        <p class="product-price mb-0">{{ item.product.price|floatformat:0 }} <span class="currency">FC</span></p>
+                    </div>
+                    <div class="col-auto">
+                        <form method="post" action="{% url 'cart:update' item_id=item.id %}" class="d-flex align-items-center gap-2">
+                            {% csrf_token %}
+                            <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="{{ item.product.quantity }}" class="form-control form-control-sm" style="width: 70px;">
+                            <button type="submit" class="btn btn-outline-primary btn-sm">
+                                <i class="fas fa-sync-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                    <div class="col-auto text-end">
+                        <p class="fw-bold mb-1" style="color: var(--primary-dark);">{{ item.subtotal|floatformat:0 }} FC</p>
+                        <form method="post" action="{% url 'cart:remove' item_id=item.id %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-outline-danger btn-sm">
+                                <i class="fas fa-trash-alt"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+    <div class="col-lg-4">
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <h5 class="fw-bold mb-3" style="color: var(--dark);">Résumé</h5>
+                <hr style="border-color: var(--gray-200);">
+                <div class="d-flex justify-content-between mb-2">
+                    <span style="color: var(--gray-600);">Articles ({{ cart.total_items }})</span>
+                    <span class="fw-bold">{{ cart.total|floatformat:0 }} FC</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2">
+                    <span style="color: var(--gray-600);">Livraison</span>
+                    <span class="fw-bold" style="color: var(--success);">Gratuite</span>
+                </div>
+                <hr style="border-color: var(--gray-200);">
+                <div class="d-flex justify-content-between fw-bold fs-5">
+                    <span>Total</span>
+                    <span class="price-tag">{{ cart.total|floatformat:0 }} <span class="currency">FC</span></span>
+                </div>
+                <a href="{% url 'orders:checkout' %}" class="btn btn-primary w-100 mt-3 btn-lg">
+                    <i class="fas fa-lock me-2"></i>Passer la commande
+                </a>
+                <a href="{% url 'products:list' %}" class="btn btn-outline-secondary w-100 mt-2">
+                    <i class="fas fa-arrow-left me-2"></i>Continuer les achats
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="empty-state py-5">
+    <i class="fas fa-shopping-cart fa-4x"></i>
+    <h4>Votre panier est vide</h4>
+    <p>Découvrez nos produits et ajoutez-les à votre panier.</p>
+    <a href="{% url 'products:list' %}" class="btn btn-primary btn-lg">
+        <i class="fas fa-store me-2"></i>Voir le catalogue
+    </a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Devenir vendeur - UzaShop{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="auth-card">
+            <!-- En-tête vendeur avec icône dorée -->
+            <div class="text-center mb-4">
+                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), #d97706); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
+                    <i class="fas fa-store text-white fa-lg"></i>
+                </div>
+                <h3 class="fw-bold mb-1">Devenir vendeur</h3>
+                <p class="text-muted mb-0">Créez votre boutique et vendez sur UzaShop en RDC</p>
+            </div>
+
+            <!-- Avantages vendeur -->
+            <div class="mb-4 p-3" style="background: linear-gradient(135deg, rgba(245,158,11,0.08), rgba(5,150,105,0.08)); border-radius: 12px;">
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-check-circle me-2" style="color: var(--primary);"></i>
+                    <small class="fw-semibold">Publiez vos produits gratuitement</small>
+                </div>
+                <div class="d-flex align-items-center mb-2">
+                    <i class="fas fa-check-circle me-2" style="color: var(--primary);"></i>
+                    <small class="fw-semibold">Recevez des paiements via Mobile Money</small>
+                </div>
+                <div class="d-flex align-items-center">
+                    <i class="fas fa-check-circle me-2" style="color: var(--primary);"></i>
+                    <small class="fw-semibold">Tableau de bord vendeur complet</small>
+                </div>
+            </div>
+
+            {% if form.non_field_errors %}
+            <div class="alert alert-danger border-0" style="border-radius: 12px;">
+                <i class="fas fa-exclamation-circle me-2"></i>
+                {% for error in form.non_field_errors %}
+                <span>{{ error }}</span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+            <form method="post">
+                {% csrf_token %}
+
+                {% for field in form %}
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">{{ field.label }}</label>
+                    {{ field }}
+                    {% if field.help_text %}
+                    <div class="form-text"><i class="fas fa-info-circle me-1"></i>{{ field.help_text }}</div>
+                    {% endif %}
+                    {% if field.errors %}
+                    <div class="text-danger small mt-1"><i class="fas fa-exclamation-triangle me-1"></i>{{ field.errors.0 }}</div>
+                    {% endif %}
+                </div>
+                {% endfor %}
+
+                <button type="submit" class="btn w-100 mb-3" style="padding: 12px; border-radius: 12px; font-weight: 600; background: linear-gradient(135deg, var(--accent), #d97706); color: white; border: none;">
+                    <i class="fas fa-rocket me-2"></i>Créer mon espace vendeur
+                </button>
+            </form>
+
+            <div class="text-center mt-4 pt-3" style="border-top: 1px solid var(--border-color);">
+                <p class="text-muted mb-0">
+                    Déjà un compte ? <a href="{% url 'accounts:login' %}" class="fw-semibold" style="color: var(--primary);">Se connecter</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

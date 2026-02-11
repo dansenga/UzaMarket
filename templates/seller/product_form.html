@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h2 class="section-title mb-4"><i class="fas fa-{% if product %}edit{% else %}plus{% endif %} me-2"></i>{{ title }}</h2>
+
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-4">
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="row">
+                        <div class="col-md-8 mb-3">
+                            <label class="form-label">Nom du produit</label>
+                            {{ form.name }}
+                            {% if form.name.errors %}
+                            <div class="text-danger small mt-1">{{ form.name.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Catégorie</label>
+                            {{ form.category }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Description</label>
+                        {{ form.description }}
+                        {% if form.description.errors %}
+                        <div class="text-danger small mt-1">{{ form.description.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Prix (FC)</label>
+                            {{ form.price }}
+                            {% if form.price.errors %}
+                            <div class="text-danger small mt-1">{{ form.price.errors.0 }}</div>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Quantité</label>
+                            {{ form.quantity }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">État</label>
+                            {{ form.condition }}
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label"><i class="fas fa-link me-1" style="color: var(--primary);"></i>URL de l'image (internet)</label>
+                        {{ form.image_url }}
+                        <small style="color: var(--gray-500);">Collez un lien vers une image du produit. Alternative aux images uploadées.</small>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Image principale</label>
+                            {{ form.image }}
+                            {% if product and product.image %}
+                            <small style="color: var(--gray-500);" class="d-block mt-1">Image actuelle conservée si non modifiée</small>
+                            {% endif %}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Image 2 (optionnel)</label>
+                            {{ form.image_2 }}
+                        </div>
+                        <div class="col-md-4 mb-3">
+                            <label class="form-label">Image 3 (optionnel)</label>
+                            {{ form.image_3 }}
+                        </div>
+                    </div>
+
+                    <div class="d-flex gap-2">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i>{% if product %}Mettre à jour{% else %}Créer le produit{% endif %}
+                        </button>
+                        <a href="{% url 'seller:products' %}" class="btn btn-outline-secondary">Annuler</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

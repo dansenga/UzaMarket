@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Contact{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <h1 class="mb-4">Contactez-nous</h1>
+        <div class="row g-4">
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <h5><i class="fas fa-envelope me-2 text-primary"></i>Email</h5>
+                    <p class="text-muted">contact@uzashop.com</p>
+
+                    <h5><i class="fas fa-phone me-2 text-primary"></i>Téléphone</h5>
+                    <p class="text-muted">+243 XXX XXX XXX</p>
+
+                    <h5><i class="fas fa-map-marker-alt me-2 text-primary"></i>Adresse</h5>
+                    <p class="text-muted">Kinshasa, RD Congo</p>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="card border-0 shadow-sm p-4 h-100">
+                    <h5 class="mb-3">Envoyez-nous un message</h5>
+                    <form>
+                        <div class="mb-3">
+                            <input type="text" class="form-control" placeholder="Votre nom">
+                        </div>
+                        <div class="mb-3">
+                            <input type="email" class="form-control" placeholder="Votre email">
+                        </div>
+                        <div class="mb-3">
+                            <textarea class="form-control" rows="4" placeholder="Votre message"></textarea>
+                        </div>
+                        <button type="submit" class="btn btn-primary w-100">
+                            <i class="fas fa-paper-plane me-2"></i>Envoyer
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

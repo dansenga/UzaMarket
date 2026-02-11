@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}{{ product.name }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-4">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="{% url 'core:home' %}">Accueil</a></li>
+        <li class="breadcrumb-item"><a href="{% url 'products:list' %}">Catalogue</a></li>
+        {% if product.category %}
+        <li class="breadcrumb-item"><a href="{% url 'products:list' %}?category={{ product.category.slug }}">{{ product.category.name }}</a></li>
+        {% endif %}
+        <li class="breadcrumb-item active">{{ product.name }}</li>
+    </ol>
+</nav>
+
+<div class="row g-4">
+    <!-- Images -->
+    <div class="col-lg-6">
+        <div class="card border-0 shadow-sm" style="border-radius: var(--radius-xl);">
+            {% if product.display_image %}
+            <img src="{{ product.display_image }}" class="card-img-top" alt="{{ product.name }}" style="max-height: 450px; object-fit: contain; background: var(--gray-100); border-radius: var(--radius-xl);">
+            {% else %}
+            <div class="d-flex align-items-center justify-content-center" style="height: 450px; background: var(--gray-100); border-radius: var(--radius-xl);">
+                <i class="fas fa-image fa-5x" style="color: var(--gray-300);"></i>
+            </div>
+            {% endif %}
+        </div>
+        {% if product.image_2 or product.image_3 %}
+        <div class="row g-2 mt-2">
+            {% if product.image_2 %}
+            <div class="col-6">
+                <img src="{{ product.image_2.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}" style="height: 150px; width: 100%; object-fit: cover; border-radius: var(--radius-lg);">
+            </div>
+            {% endif %}
+            {% if product.image_3 %}
+            <div class="col-6">
+                <img src="{{ product.image_3.url }}" class="img-fluid rounded shadow-sm" alt="{{ product.name }}" style="height: 150px; width: 100%; object-fit: cover; border-radius: var(--radius-lg);">
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+    </div>
+
+    <!-- Détails -->
+    <div class="col-lg-6">
+        <h2 class="fw-bold mb-2" style="color: var(--dark);">{{ product.name }}</h2>
+
+        <div class="d-flex gap-2 mb-3">
+            <span class="badge badge-condition"><i class="fas fa-tag me-1"></i>{{ product.get_condition_display }}</span>
+            {% if product.category %}
+            <span class="badge badge-category">{{ product.category.name }}</span>
+            {% endif %}
+        </div>
+
+        <div class="price-tag price-tag-lg mb-4">
+            <span class="amount">{{ product.price|floatformat:0 }}</span>
+            <span class="currency">FC</span>
+        </div>
+
+        <div class="card border-0 mb-4" style="background: var(--gray-100); border-radius: var(--radius-lg);">
+            <div class="card-body py-3">
+                <div class="row g-3">
+                    <div class="col-6">
+                        <p class="mb-0" style="font-size: 0.82rem; color: var(--gray-500);">Vendeur</p>
+                        <p class="mb-0 fw-bold" style="color: var(--dark);"><i class="fas fa-user-circle me-1" style="color: var(--primary);"></i>{{ product.seller.username }}</p>
+                    </div>
+                    <div class="col-6">
+                        <p class="mb-0" style="font-size: 0.82rem; color: var(--gray-500);">Disponibilité</p>
+                        {% if product.is_in_stock %}
+                        <p class="mb-0 fw-bold" style="color: var(--success);"><i class="fas fa-check-circle me-1"></i>En stock ({{ product.quantity }})</p>
+                        {% else %}
+                        <p class="mb-0 fw-bold" style="color: var(--danger);"><i class="fas fa-times-circle me-1"></i>Rupture de stock</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {% if product.is_in_stock %}
+        <form method="post" action="{% url 'cart:add' product_id=product.id %}" class="mb-4">
+            {% csrf_token %}
+            <div class="row g-2 align-items-end">
+                <div class="col-auto">
+                    <label class="form-label" style="font-size: 0.82rem;">Quantité</label>
+                    <input type="number" name="quantity" value="1" min="1" max="{{ product.quantity }}" class="form-control" style="width: 80px;">
+                </div>
+                <div class="col">
+                    <button type="submit" class="btn btn-primary btn-lg w-100">
+                        <i class="fas fa-cart-plus me-2"></i>Ajouter au panier
+                    </button>
+                </div>
+            </div>
+        </form>
+        {% endif %}
+
+        <hr style="border-color: var(--gray-200);">
+
+        <h5 style="color: var(--dark);">Description</h5>
+        <div style="color: var(--gray-600); line-height: 1.8;">{{ product.description|linebreaks }}</div>
+
+        <p class="mt-3" style="color: var(--gray-400); font-size: 0.82rem;">
+            <i class="fas fa-clock me-1"></i>Publié le {{ product.created_at|date:"d/m/Y" }}
+        </p>
+    </div>
+</div>
+
+<!-- Produits similaires -->
+{% if related_products %}
+<hr class="my-5" style="border-color: var(--gray-200);">
+<h4 class="section-title mb-4">Produits similaires</h4>
+<div class="row g-4">
+    {% for product in related_products %}
+    <div class="col-6 col-md-3">
+        {% include "products/includes/product_card.html" with product=product %}
+    </div>
+    {% endfor %}
+</div>
+{% endif %}
+{% endblock %}

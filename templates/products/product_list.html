@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block title %}Catalogue - UzaShop{% endblock %}
+
+{% block content %}
+<!-- En-tête de page -->
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h2 class="section-title mb-1">
+            {% if query %}<i class="fas fa-search me-2"></i>Résultats pour « {{ query }} »{% else %}<i class="fas fa-th-large me-2"></i>Catalogue{% endif %}
+        </h2>
+        <p class="text-muted mb-0">{{ products|length }} produit{{ products|length|pluralize }} trouvé{{ products|length|pluralize }}</p>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Filtres latéraux -->
+    <div class="col-lg-3 mb-4">
+        <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
+            <div class="card-header bg-white border-0 pt-4 px-4 pb-0">
+                <h5 class="fw-bold mb-0"><i class="fas fa-sliders-h me-2 text-primary"></i>Filtres</h5>
+            </div>
+            <div class="card-body px-4 pb-4">
+                <form method="get" action="{% url 'products:list' %}">
+                    <!-- Catégorie -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-uppercase" style="letter-spacing: 0.5px; color: var(--text-secondary);">Catégorie</label>
+                        <select name="category" class="form-select form-select-sm">
+                            <option value="">Toutes les catégories</option>
+                            {% for cat in categories %}
+                            <option value="{{ cat.slug }}" {% if current_category == cat.slug %}selected{% endif %}>
+                                {{ cat.name }}
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- État -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-uppercase" style="letter-spacing: 0.5px; color: var(--text-secondary);">État</label>
+                        <select name="condition" class="form-select form-select-sm">
+                            <option value="">Tous les états</option>
+                            <option value="new" {% if current_condition == "new" %}selected{% endif %}>Neuf</option>
+                            <option value="like_new" {% if current_condition == "like_new" %}selected{% endif %}>Comme neuf</option>
+                            <option value="good" {% if current_condition == "good" %}selected{% endif %}>Bon état</option>
+                            <option value="fair" {% if current_condition == "fair" %}selected{% endif %}>État acceptable</option>
+                        </select>
+                    </div>
+
+                    <!-- Prix (FC) -->
+                    <div class="mb-3">
+                        <label class="form-label fw-semibold small text-uppercase" style="letter-spacing: 0.5px; color: var(--text-secondary);">Prix (FC)</label>
+                        <div class="row g-2">
+                            <div class="col-6">
+                                <input type="number" name="min_price" class="form-control form-control-sm" placeholder="Min" value="{{ request.GET.min_price|default:'' }}">
+                            </div>
+                            <div class="col-6">
+                                <input type="number" name="max_price" class="form-control form-control-sm" placeholder="Max" value="{{ request.GET.max_price|default:'' }}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Tri -->
+                    <div class="mb-4">
+                        <label class="form-label fw-semibold small text-uppercase" style="letter-spacing: 0.5px; color: var(--text-secondary);">Trier par</label>
+                        <select name="sort" class="form-select form-select-sm">
+                            <option value="-created_at" {% if current_sort == "-created_at" %}selected{% endif %}>Plus récents</option>
+                            <option value="price" {% if current_sort == "price" %}selected{% endif %}>Prix croissant</option>
+                            <option value="-price" {% if current_sort == "-price" %}selected{% endif %}>Prix décroissant</option>
+                            <option value="name" {% if current_sort == "name" %}selected{% endif %}>Nom (A-Z)</option>
+                        </select>
+                    </div>
+
+                    {% if query %}
+                    <input type="hidden" name="q" value="{{ query }}">
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-primary btn-sm w-100" style="border-radius: 10px; padding: 10px;">
+                        <i class="fas fa-search me-1"></i>Appliquer les filtres
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Grille de produits -->
+    <div class="col-lg-9">
+        {% if products %}
+        <div class="row g-4" id="product-grid">
+            {% include "products/includes/product_grid.html" %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h4>Aucun produit trouvé</h4>
+            <p class="text-muted">Essayez de modifier vos filtres ou explorez d'autres catégories.</p>
+            <a href="{% url 'products:list' %}" class="btn btn-primary">
+                <i class="fas fa-th-large me-2"></i>Voir tout le catalogue
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
