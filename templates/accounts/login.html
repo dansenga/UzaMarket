@@ -1,62 +1,102 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Connexion - UzaMarket{% endblock %}
+{% block title %}Connexion{% endblock %}
+
+{% block main_class %}{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-5">
-    <div class="col-md-5 col-lg-4">
-        <div class="auth-card">
-            <!-- En-tête avec icône -->
-            <div class="text-center mb-4">
-                <div style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); display: flex; align-items: center; justify-content: center; margin: 0 auto 1rem;">
-                    <i class="fas fa-sign-in-alt text-white fa-lg"></i>
+<section class="auth-section">
+    <div class="container">
+        <div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 200px);">
+            <!-- Panneau gauche : branding -->
+            <div class="col-lg-6 d-none d-lg-flex">
+                <div class="auth-branding">
+                    <div class="auth-branding__icon">
+                        <img src="{% static 'img/favicon.svg' %}" alt="UzaMarket" width="48" height="48" style="border-radius: 12px;">
+                    </div>
+                    <h1 class="auth-branding__title">Bienvenue sur<br><span>UzaMarket</span></h1>
+                    <p class="auth-branding__text">La marketplace #1 en RD Congo. Achetez et vendez entre particuliers en toute confiance.</p>
+                    <div class="auth-branding__features">
+                        <div class="auth-feature">
+                            <div class="auth-feature__icon"><i class="fas fa-shield-alt"></i></div>
+                            <span>Paiement sécurisé Mobile Money</span>
+                        </div>
+                        <div class="auth-feature">
+                            <div class="auth-feature__icon"><i class="fas fa-truck"></i></div>
+                            <span>Livraison dans toute la RDC</span>
+                        </div>
+                        <div class="auth-feature">
+                            <div class="auth-feature__icon"><i class="fas fa-users"></i></div>
+                            <span>Communauté de confiance</span>
+                        </div>
+                    </div>
                 </div>
-                <h3 class="fw-bold mb-1">Bon retour !</h3>
-                <p class="text-muted mb-0">Connectez-vous à votre compte UzaMarket</p>
             </div>
 
-            {% if form.non_field_errors %}
-            <div class="alert alert-danger border-0" style="border-radius: 12px;">
-                <i class="fas fa-exclamation-circle me-2"></i>
-                {% for error in form.non_field_errors %}
-                <span>{{ error }}</span>
-                {% endfor %}
-            </div>
-            {% endif %}
+            <!-- Panneau droit : formulaire -->
+            <div class="col-lg-5 col-md-7 col-sm-10">
+                <div class="auth-card">
+                    <div class="auth-card__header">
+                        <div class="auth-card__logo d-lg-none mb-3">
+                            <img src="{% static 'img/favicon.svg' %}" alt="UzaMarket" width="36" height="36" style="border-radius: 8px;">
+                            <span>UzaMarket</span>
+                        </div>
+                        <h2 class="auth-card__title">Bon retour !</h2>
+                        <p class="auth-card__subtitle">Connectez-vous pour continuer</p>
+                    </div>
 
-            <form method="post">
-                {% csrf_token %}
-
-                <div class="mb-3">
-                    <label class="form-label fw-semibold"><i class="fas fa-user me-1 text-muted"></i> Nom d'utilisateur</label>
-                    {{ form.username }}
-                    {% if form.username.errors %}
-                    <div class="text-danger small mt-1"><i class="fas fa-exclamation-triangle me-1"></i>{{ form.username.errors.0 }}</div>
+                    {% if form.non_field_errors %}
+                    <div class="auth-alert auth-alert--error">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <span>{% for error in form.non_field_errors %}{{ error }}{% endfor %}</span>
+                    </div>
                     {% endif %}
+
+                    <form method="post" class="auth-form">
+                        {% csrf_token %}
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="id_username">
+                                <i class="fas fa-user"></i> Nom d'utilisateur
+                            </label>
+                            <div class="auth-input-wrap">
+                                {{ form.username }}
+                            </div>
+                            {% if form.username.errors %}
+                            <span class="auth-error"><i class="fas fa-times-circle"></i> {{ form.username.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="id_password">
+                                <i class="fas fa-lock"></i> Mot de passe
+                            </label>
+                            <div class="auth-input-wrap">
+                                {{ form.password }}
+                            </div>
+                            {% if form.password.errors %}
+                            <span class="auth-error"><i class="fas fa-times-circle"></i> {{ form.password.errors.0 }}</span>
+                            {% endif %}
+                        </div>
+
+                        <button type="submit" class="auth-btn auth-btn--primary">
+                            <span>Se connecter</span>
+                            <i class="fas fa-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <div class="auth-divider">
+                        <span>ou</span>
+                    </div>
+
+                    <div class="auth-footer">
+                        <p>Pas encore de compte ? <a href="{% url 'accounts:register' %}" class="auth-link">Créer un compte</a></p>
+                        <p class="auth-footer__seller"><i class="fas fa-store"></i> Vendeur ? <a href="{% url 'accounts:seller_register' %}" class="auth-link auth-link--accent">Ouvrir une boutique</a></p>
+                    </div>
                 </div>
-
-                <div class="mb-4">
-                    <label class="form-label fw-semibold"><i class="fas fa-lock me-1 text-muted"></i> Mot de passe</label>
-                    {{ form.password }}
-                    {% if form.password.errors %}
-                    <div class="text-danger small mt-1"><i class="fas fa-exclamation-triangle me-1"></i>{{ form.password.errors.0 }}</div>
-                    {% endif %}
-                </div>
-
-                <button type="submit" class="btn btn-primary w-100 mb-3" style="padding: 12px; border-radius: 12px; font-weight: 600;">
-                    <i class="fas fa-sign-in-alt me-2"></i>Se connecter
-                </button>
-            </form>
-
-            <div class="text-center mt-4 pt-3" style="border-top: 1px solid var(--border-color);">
-                <p class="text-muted mb-2">
-                    Pas encore de compte ? <a href="{% url 'accounts:register' %}" class="fw-semibold" style="color: var(--primary);">S'inscrire</a>
-                </p>
-                <p class="text-muted mb-0">
-                    <i class="fas fa-store me-1"></i> Vous êtes vendeur ? <a href="{% url 'accounts:seller_register' %}" class="fw-semibold" style="color: var(--accent);">Inscription vendeur</a>
-                </p>
             </div>
         </div>
     </div>
-</div>
+</section>
 {% endblock %}

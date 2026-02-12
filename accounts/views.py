@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from django.utils import timezone
 from .forms import RegisterForm, SellerRegisterForm, LoginForm, ProfileForm
 
 
@@ -72,4 +73,36 @@ def profile_view(request):
             return redirect("accounts:profile")
     else:
         form = ProfileForm(instance=request.user)
-    return render(request, "accounts/profile.html", {"form": form})
+
+    # Statistiques profil
+    user = request.user
+    order_count = user.orders.count() if hasattr(user, 'orders') else 0
+    total_spent = 0
+    if order_count:
+        from django.db.models import Sum
+        total_spent = user.orders.filter(status='paid').aggregate(
+            total=Sum('total_amount')
+        )['total'] or 0
+
+    product_count = 0
+    if user.is_seller and hasattr(user, 'products'):
+        product_count = user.products.count()
+
+    message_count = 0
+    try:
+        from messaging.models import Conversation
+        message_count = Conversation.objects.filter(participants=user).count()
+    except Exception:
+        pass
+
+    member_since = user.created_at if hasattr(user, 'created_at') else user.date_joined
+
+    context = {
+        "form": form,
+        "order_count": order_count,
+        "total_spent": total_spent,
+        "product_count": product_count,
+        "message_count": message_count,
+        "member_since": member_since,
+    }
+    return render(request, "accounts/profile.html", context)

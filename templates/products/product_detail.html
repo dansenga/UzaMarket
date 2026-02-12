@@ -78,7 +78,7 @@
         </div>
 
         {% if product.is_in_stock %}
-        <form method="post" action="{% url 'cart:add' product_id=product.id %}" class="mb-4">
+        <form method="post" action="{% url 'cart:add' product_id=product.id %}" class="mb-3">
             {% csrf_token %}
             <div class="row g-2 align-items-end">
                 <div class="col-auto">
@@ -92,6 +92,19 @@
                 </div>
             </div>
         </form>
+        {% endif %}
+
+        <!-- Contacter le vendeur -->
+        {% if user.is_authenticated and product.seller != user %}
+        <a href="{% url 'messaging:start_conversation' user_id=product.seller.id %}?product={{ product.id }}"
+           class="btn btn-outline-primary w-100 mb-3">
+            <i class="fas fa-comment-dots me-2"></i>Contacter {{ product.seller.username }}
+        </a>
+        {% elif not user.is_authenticated %}
+        <a href="{% url 'accounts:login' %}?next={% url 'products:detail' slug=product.slug %}"
+           class="btn btn-outline-primary w-100 mb-3">
+            <i class="fas fa-comment-dots me-2"></i>Connectez-vous pour contacter le vendeur
+        </a>
         {% endif %}
 
         <hr style="border-color: var(--gray-200);">

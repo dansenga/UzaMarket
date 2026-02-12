@@ -21,11 +21,7 @@ class CheckoutForm(forms.Form):
     )
     payment_method = forms.ChoiceField(
         choices=[
-            ("mpesa", "M-Pesa (Vodacom)"),
-            ("airtel_money", "Airtel Money"),
-            ("orange_money", "Orange Money"),
-            ("afrimoney", "Afri Money (Africell)"),
-            ("monero", "Monero (XMR) — Crypto"),
+            ("mobile_money", "Mobile Money (M-Pesa, Airtel Money, Orange Money…)"),
             ("cash_on_delivery", "Paiement à la livraison"),
         ],
         widget=forms.RadioSelect(attrs={"class": "form-check-input"}),
@@ -39,15 +35,6 @@ class CheckoutForm(forms.Form):
         }),
         label="Numéro Mobile Money",
         help_text="Requis pour le paiement par mobile money",
-    )
-    monero_address = forms.CharField(
-        required=False,
-        widget=forms.TextInput(attrs={
-            "class": "form-control",
-            "placeholder": "Adresse Monero (XMR)…",
-        }),
-        label="Adresse de portefeuille Monero",
-        help_text="Requis pour le paiement en Monero",
     )
     notes = forms.CharField(
         required=False,
@@ -63,8 +50,9 @@ class CheckoutForm(forms.Form):
         cleaned_data = super().clean()
         method = cleaned_data.get("payment_method")
         mobile = cleaned_data.get("mobile_number")
-        if method in ("mpesa", "airtel_money", "orange_money", "afrimoney") and not mobile:
-            self.add_error("mobile_number", "Le numéro Mobile Money est requis pour ce mode de paiement.")
-        if method == "monero" and not cleaned_data.get("monero_address"):
-            self.add_error("monero_address", "L'adresse Monero est requise pour le paiement crypto.")
+        if method == "mobile_money" and not mobile:
+            self.add_error(
+                "mobile_number",
+                "Le numéro Mobile Money est requis pour le paiement mobile.",
+            )
         return cleaned_data

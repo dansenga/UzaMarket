@@ -15,7 +15,7 @@
         {% if conversations %}
         <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
             {% for conv in conversations %}
-            {% with other=conv.get_other_participant:user last_msg=conv.last_message %}
+            {% with other=conv.other_participant last_msg=conv.last_message %}
             <a href="{% url 'messaging:conversation' conversation_id=conv.id %}" class="text-decoration-none">
                 <div class="conversation-item d-flex align-items-center p-3 {% if not forloop.last %}border-bottom{% endif %} {% if conv.unread > 0 %}conversation-unread{% endif %}">
                     <!-- Avatar -->

@@ -141,3 +141,10 @@ LOGOUT_REDIRECT_URL = "core:home"
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+# ──────────────── Moneroo Payment Gateway ────────────────
+# Clés API : https://app.moneroo.io → Developers → API Keys
+MONEROO_SECRET_KEY = "YOUR_MONEROO_SECRET_KEY"  # Remplacer par votre clé secrète
+MONEROO_WEBHOOK_SECRET = ""  # Secret pour vérifier les webhooks (optionnel)
+MONEROO_API_URL = "https://api.moneroo.io/v1"
+MONEROO_CURRENCY = "CDF"  # Franc Congolais

@@ -6,56 +6,71 @@
 {% block main_class %}{% endblock %}
 
 {% block content %}
-<!-- Hero Section Premium -->
-<section class="hero-section py-5">
-    <div class="container">
-        <div class="row align-items-center min-vh-50">
-            <div class="col-lg-7 hero-content">
-                <span class="badge bg-dark border border-secondary px-3 py-2 mb-3" style="font-size: 0.8rem;">
-                    🇨🇩 La marketplace #1 en RD Congo
-                </span>
-                <h1 class="hero-title mb-3">
-                    Achetez & vendez<br>
-                    <span class="text-accent">entre particuliers</span>
+<!-- ═══════════════ HERO SECTION ═══════════════ -->
+<section class="hero">
+    <div class="hero__overlay"></div>
+    <div class="hero__grain"></div>
+
+    <div class="container position-relative" style="z-index: 3;">
+        <div class="row min-vh-75 align-items-center">
+            <div class="col-lg-8 col-xl-7">
+
+                <!-- Eyebrow -->
+                <div class="hero__eyebrow">
+                    <span class="hero__eyebrow-dot"></span>
+                    Marketplace N°1 en RD Congo
+                </div>
+
+                <!-- Titre principal -->
+                <h1 class="hero__heading">
+                    La nouvelle façon<br>
+                    d'<span class="hero__heading--accent">acheter</span> &
+                    <span class="hero__heading--accent">vendre</span><br>
+                    en RDC
                 </h1>
-                <p class="hero-subtitle mb-4">UzaMarket connecte acheteurs et vendeurs à travers toute la RDC. Paiement sécurisé par Mobile Money & Monero (XMR).</p>
-                <div class="d-flex gap-3 flex-wrap">
-                    <a href="{% url 'products:list' %}" class="btn btn-accent btn-lg">
-                        <i class="fas fa-store me-2"></i>Explorer le catalogue
+
+                <!-- Sous-titre -->
+                <p class="hero__subheading">
+                    UzaMarket connecte des milliers d'acheteurs et vendeurs à travers toute la République Démocratique du Congo. Paiement sécurisé par Mobile Money.
+                </p>
+
+                <!-- CTA Buttons -->
+                <div class="hero__cta">
+                    <a href="{% url 'products:list' %}" class="hero__btn hero__btn--primary">
+                        Explorer le catalogue
+                        <i class="fas fa-arrow-right ms-2"></i>
                     </a>
-                    <a href="{% url 'accounts:seller_register' %}" class="btn btn-outline-light btn-lg">
-                        <i class="fas fa-rocket me-2"></i>Devenir vendeur
+                    <a href="{% url 'accounts:seller_register' %}" class="hero__btn hero__btn--ghost">
+                        <i class="fas fa-store me-2"></i>
+                        Devenir vendeur
                     </a>
                 </div>
-                <div class="hero-stats mt-4">
-                    <div class="hero-stat">
-                        <span class="hero-stat-number">500+</span>
-                        <span class="hero-stat-label">Produits</span>
+
+                <!-- Trust bar -->
+                <div class="hero__trust">
+                    <div class="hero__trust-item">
+                        <i class="fas fa-shield-alt"></i>
+                        <span>Paiement sécurisé</span>
                     </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-number">200+</span>
-                        <span class="hero-stat-label">Vendeurs</span>
+                    <div class="hero__trust-divider"></div>
+                    <div class="hero__trust-item">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>Mobile Money</span>
                     </div>
-                    <div class="hero-stat">
-                        <span class="hero-stat-number">98%</span>
-                        <span class="hero-stat-label">Satisfaction</span>
-                    </div>
-                </div>
-            </div>
-            <div class="col-lg-5 text-center mt-4 mt-lg-0 hero-illustration d-none d-lg-block">
-                <div style="position: relative;">
-                    <i class="fas fa-shopping-bag hero-icon-main"></i>
-                    <div style="position: absolute; top: 20%; right: 10%; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.3); backdrop-filter: blur(10px); border-radius: 1rem; padding: 1rem 1.5rem; color: white;">
-                        <i class="fas fa-mobile-alt me-2" style="color: #f59e0b;"></i>
-                        <span style="font-weight: 600; font-size: 0.9rem;">Mobile Money</span>
-                    </div>
-                    <div style="position: absolute; bottom: 25%; left: 5%; background: rgba(5,150,105,0.15); border: 1px solid rgba(5,150,105,0.3); backdrop-filter: blur(10px); border-radius: 1rem; padding: 1rem 1.5rem; color: white;">
-                        <i class="fas fa-shield-alt me-2" style="color: #34d399;"></i>
-                        <span style="font-weight: 600; font-size: 0.9rem;">Paiement sécurisé</span>
+                    <div class="hero__trust-divider"></div>
+                    <div class="hero__trust-item">
+                        <i class="fas fa-truck"></i>
+                        <span>Livraison RDC</span>
                     </div>
                 </div>
+
             </div>
         </div>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="hero__scroll">
+        <div class="hero__scroll-line"></div>
     </div>
 </section>
 
@@ -112,19 +127,27 @@
 </section>
 
 <!-- Section Vendeur CTA -->
-<section class="vendor-cta-section py-5 text-white">
-    <div class="container text-center position-relative" style="z-index: 2;">
-        <div class="py-4">
-            <span class="badge bg-dark border border-secondary px-3 py-2 mb-3" style="font-size: 0.8rem;">
-                <i class="fas fa-store me-1"></i> Espace Vendeur
-            </span>
-            <h2 class="mb-3" style="font-family: 'Playfair Display', serif; font-size: 2.2rem; color: white;">Vous avez des produits à vendre ?</h2>
-            <p class="lead mb-4" style="color: rgba(255,255,255,0.7); max-width: 550px; margin: 0 auto;">
-                Rejoignez des centaines de vendeurs sur UzaMarket. Créez votre boutique gratuitement et recevez vos paiements par Mobile Money.
-            </p>
-            <a href="{% url 'accounts:seller_register' %}" class="btn btn-accent btn-lg">
-                <i class="fas fa-rocket me-2"></i>Commencer à vendre
-            </a>
+<section class="vendor-cta py-5">
+    <div class="container">
+        <div class="vendor-cta__card">
+            <div class="row align-items-center">
+                <div class="col-lg-7">
+                    <span class="hero__eyebrow" style="animation: none; margin-bottom: 1.25rem;">
+                        <span class="hero__eyebrow-dot" style="animation: none;"></span>
+                        Espace Vendeur
+                    </span>
+                    <h2 class="vendor-cta__title">Vous avez des produits à&nbsp;vendre&nbsp;?</h2>
+                    <p class="vendor-cta__text">
+                        Rejoignez des centaines de vendeurs sur UzaMarket. Créez votre boutique gratuitement et recevez vos paiements par Mobile Money.
+                    </p>
+                </div>
+                <div class="col-lg-5 text-lg-end mt-4 mt-lg-0">
+                    <a href="{% url 'accounts:seller_register' %}" class="hero__btn hero__btn--primary" style="font-size: 1rem; padding: 1rem 2.4rem;">
+                        Commencer à vendre
+                        <i class="fas fa-arrow-right ms-2"></i>
+                    </a>
+                </div>
+            </div>
         </div>
     </div>
 </section>

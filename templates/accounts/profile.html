@@ -1,63 +1,189 @@
 {% extends "base.html" %}
+{% load static %}
 
-{% block title %}Mon profil - UzaMarket{% endblock %}
+{% block title %}Mon profil{% endblock %}
 
 {% block content %}
-<div class="row justify-content-center py-4">
-    <div class="col-md-8 col-lg-7">
-        <!-- En-tête profil -->
-        <div class="text-center mb-4">
-            {% if user.avatar %}
-            <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="profile-avatar mb-3">
-            {% else %}
-            <div class="profile-avatar-fallback mx-auto mb-3">
-                <i class="fas fa-user text-white fa-2x"></i>
+<!-- Bannière profil -->
+<div class="profile-banner">
+    <div class="profile-banner__overlay"></div>
+    <div class="container position-relative" style="z-index: 2;">
+        <div class="row align-items-end">
+            <div class="col-auto">
+                <div class="profile-avatar-wrapper">
+                    {% if user.avatar %}
+                    <img src="{{ user.avatar.url }}" alt="{{ user.username }}" class="profile-avatar-lg">
+                    {% else %}
+                    <div class="profile-avatar-lg-fallback">
+                        <span>{{ user.username|first|upper }}</span>
+                    </div>
+                    {% endif %}
+                    <div class="profile-avatar-status"></div>
+                </div>
             </div>
-            {% endif %}
-            <h2 class="section-title mb-1">Mon profil</h2>
-            <div class="mt-2">
-                <span class="badge" style="background: var(--gradient-primary); padding: 6px 16px; border-radius: 20px; font-size: 0.8rem;">
-                    {{ user.get_role_display }}
-                </span>
+            <div class="col">
+                <h1 class="profile-banner__name">{{ user.username }}</h1>
+                <div class="profile-banner__meta">
+                    <span class="profile-role-badge {% if user.is_seller %}profile-role-badge--seller{% endif %}">
+                        <i class="fas fa-{% if user.is_seller %}store{% elif user.is_admin_user %}shield-alt{% else %}user{% endif %}"></i>
+                        {{ user.get_role_display }}
+                    </span>
+                    <span class="profile-meta-item"><i class="fas fa-calendar-alt"></i> Membre depuis {{ member_since|date:"F Y" }}</span>
+                    {% if user.phone %}
+                    <span class="profile-meta-item"><i class="fas fa-phone"></i> {{ user.phone }}</span>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Stats rapides -->
+<div class="container" style="margin-top: -2rem; position: relative; z-index: 3;">
+    <div class="row g-3 mb-4">
+        <div class="col-6 col-md-3">
+            <div class="profile-stat-card">
+                <div class="profile-stat-card__icon" style="background: var(--primary-50); color: var(--primary);">
+                    <i class="fas fa-box"></i>
+                </div>
+                <div>
+                    <div class="profile-stat-card__value">{{ order_count }}</div>
+                    <div class="profile-stat-card__label">Commandes</div>
+                </div>
+            </div>
+        </div>
+        {% if user.is_seller %}
+        <div class="col-6 col-md-3">
+            <div class="profile-stat-card">
+                <div class="profile-stat-card__icon" style="background: rgba(245,158,11,0.1); color: var(--accent);">
+                    <i class="fas fa-tag"></i>
+                </div>
+                <div>
+                    <div class="profile-stat-card__value">{{ product_count }}</div>
+                    <div class="profile-stat-card__label">Produits</div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+        <div class="col-6 col-md-3">
+            <div class="profile-stat-card">
+                <div class="profile-stat-card__icon" style="background: rgba(16,185,129,0.1); color: var(--success);">
+                    <i class="fas fa-comment-dots"></i>
+                </div>
+                <div>
+                    <div class="profile-stat-card__value">{{ message_count }}</div>
+                    <div class="profile-stat-card__label">Conversations</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 col-md-3">
+            <div class="profile-stat-card">
+                <div class="profile-stat-card__icon" style="background: rgba(59,130,246,0.1); color: var(--info);">
+                    <i class="fas fa-wallet"></i>
+                </div>
+                <div>
+                    <div class="profile-stat-card__value">{{ total_spent|floatformat:0|default:"0" }} <small>FC</small></div>
+                    <div class="profile-stat-card__label">Dépensé</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Contenu principal -->
+<div class="container pb-5">
+    <div class="row g-4">
+        <!-- Sidebar nav -->
+        <div class="col-lg-4">
+            <div class="profile-sidebar">
+                <h6 class="profile-sidebar__title">Navigation</h6>
+                <a href="#section-info" class="profile-sidebar__link active">
+                    <i class="fas fa-user-edit"></i> Informations personnelles
+                </a>
+                <a href="{% url 'orders:history' %}" class="profile-sidebar__link">
+                    <i class="fas fa-box"></i> Mes commandes
+                </a>
+                <a href="{% url 'messaging:inbox' %}" class="profile-sidebar__link">
+                    <i class="fas fa-comment-dots"></i> Messages
+                </a>
+                {% if user.is_seller %}
+                <a href="{% url 'seller:dashboard' %}" class="profile-sidebar__link">
+                    <i class="fas fa-chart-line"></i> Dashboard vendeur
+                </a>
+                {% endif %}
+            </div>
+
+            <!-- Actions rapides -->
+            <div class="profile-sidebar mt-3">
+                <h6 class="profile-sidebar__title">Actions rapides</h6>
+                <a href="{% url 'products:list' %}" class="profile-sidebar__link">
+                    <i class="fas fa-store"></i> Explorer le catalogue
+                </a>
+                {% if not user.is_seller %}
+                <a href="{% url 'accounts:seller_register' %}" class="profile-sidebar__link profile-sidebar__link--accent">
+                    <i class="fas fa-rocket"></i> Devenir vendeur
+                </a>
+                {% endif %}
             </div>
         </div>
 
-        <div class="card border-0 shadow-sm" style="border-radius: 16px; overflow: hidden;">
-            <div class="card-body p-4 p-md-5">
-                <form method="post" enctype="multipart/form-data">
-                    {% csrf_token %}
+        <!-- Formulaire profil -->
+        <div class="col-lg-8" id="section-info">
+            <div class="profile-form-card">
+                <div class="profile-form-card__header">
+                    <h5><i class="fas fa-user-edit me-2"></i>Informations personnelles</h5>
+                    <p>Mettez à jour vos informations de profil</p>
+                </div>
+                <div class="profile-form-card__body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold"><i class="fas fa-user me-1 text-muted"></i> Nom d'utilisateur</label>
-                            {{ form.username }}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="auth-field">
+                                    <label class="auth-label" for="id_username"><i class="fas fa-user"></i> Nom d'utilisateur</label>
+                                    <div class="auth-input-wrap">{{ form.username }}</div>
+                                    {% if form.username.errors %}<span class="auth-error"><i class="fas fa-times-circle"></i> {{ form.username.errors.0 }}</span>{% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="auth-field">
+                                    <label class="auth-label" for="id_email"><i class="fas fa-envelope"></i> Email</label>
+                                    <div class="auth-input-wrap">{{ form.email }}</div>
+                                    {% if form.email.errors %}<span class="auth-error"><i class="fas fa-times-circle"></i> {{ form.email.errors.0 }}</span>{% endif %}
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold"><i class="fas fa-envelope me-1 text-muted"></i> Email</label>
-                            {{ form.email }}
-                        </div>
-                    </div>
 
-                    <div class="row">
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold"><i class="fas fa-phone me-1 text-muted"></i> Téléphone</label>
-                            {{ form.phone }}
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <div class="auth-field">
+                                    <label class="auth-label" for="id_phone"><i class="fas fa-phone"></i> Téléphone</label>
+                                    <div class="auth-input-wrap">{{ form.phone }}</div>
+                                    {% if form.phone.errors %}<span class="auth-error"><i class="fas fa-times-circle"></i> {{ form.phone.errors.0 }}</span>{% endif %}
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="auth-field">
+                                    <label class="auth-label" for="id_avatar"><i class="fas fa-camera"></i> Photo de profil</label>
+                                    <div class="auth-input-wrap">{{ form.avatar }}</div>
+                                </div>
+                            </div>
                         </div>
-                        <div class="col-md-6 mb-3">
-                            <label class="form-label fw-semibold"><i class="fas fa-camera me-1 text-muted"></i> Photo de profil</label>
-                            {{ form.avatar }}
+
+                        <div class="auth-field">
+                            <label class="auth-label" for="id_address"><i class="fas fa-map-marker-alt"></i> Adresse</label>
+                            <div class="auth-input-wrap">{{ form.address }}</div>
+                            {% if form.address.errors %}<span class="auth-error"><i class="fas fa-times-circle"></i> {{ form.address.errors.0 }}</span>{% endif %}
                         </div>
-                    </div>
 
-                    <div class="mb-4">
-                        <label class="form-label fw-semibold"><i class="fas fa-map-marker-alt me-1 text-muted"></i> Adresse</label>
-                        {{ form.address }}
-                    </div>
-
-                    <button type="submit" class="btn btn-primary" style="padding: 10px 30px; border-radius: 12px; font-weight: 600;">
-                        <i class="fas fa-save me-2"></i>Enregistrer les modifications
-                    </button>
-                </form>
+                        <div class="d-flex gap-3 mt-2">
+                            <button type="submit" class="auth-btn auth-btn--primary" style="max-width: 280px;">
+                                <span><i class="fas fa-save me-2"></i>Enregistrer</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
         </div>
     </div>

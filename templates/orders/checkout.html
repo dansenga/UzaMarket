@@ -33,7 +33,7 @@
                 </div>
             </div>
 
-            <!-- Paiement Mobile Money -->
+            <!-- Paiement -->
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-4">
                     <h5 class="fw-bold mb-3" style="color: var(--dark);"><i class="fas fa-mobile-alt me-2" style="color: var(--primary);"></i>Paiement</h5>
@@ -46,17 +46,16 @@
                         {% for radio in form.payment_method %}
                         <label class="payment-option" for="{{ radio.id_for_label }}" id="option-{{ radio.id_for_label }}">
                             {{ radio.tag }}
-                            <div class="payment-icon {% if radio.data.value == 'mpesa' %}mpesa{% elif radio.data.value == 'airtel_money' %}airtel{% elif radio.data.value == 'orange_money' %}orange{% elif radio.data.value == 'afrimoney' %}afrimoney{% elif radio.data.value == 'monero' %}monero{% else %}cash{% endif %}">
-                                {% if radio.data.value == 'monero' %}<i class="fab fa-monero"></i>
-                                {% elif radio.data.value == 'cash_on_delivery' %}<i class="fas fa-money-bill-wave"></i>
-                                {% else %}<i class="fas fa-mobile-alt"></i>{% endif %}
+                            <div class="payment-icon {% if radio.data.value == 'mobile_money' %}mobile-money{% else %}cash{% endif %}">
+                                {% if radio.data.value == 'mobile_money' %}<i class="fas fa-mobile-alt"></i>
+                                {% else %}<i class="fas fa-money-bill-wave"></i>{% endif %}
                             </div>
                             <div>
                                 <span class="payment-name">{{ radio.choice_label }}</span>
                                 <span class="payment-desc d-block">
-                                    {% if radio.data.value == 'cash_on_delivery' %}Payez à la réception
-                                    {% elif radio.data.value == 'monero' %}Paiement décentralisé & privé
-                                    {% else %}Paiement mobile instantané{% endif %}
+                                    {% if radio.data.value == 'mobile_money' %}
+                                    Payez via M-Pesa, Airtel Money, Orange Money… (Moneroo)
+                                    {% else %}Payez à la réception de votre commande{% endif %}
                                 </span>
                             </div>
                         </label>
@@ -73,14 +72,15 @@
                         <p class="small mt-1 mb-0" style="color: var(--gray-500);">{{ form.mobile_number.help_text }}</p>
                     </div>
 
-                    <!-- Adresse Monero -->
-                    <div class="mobile-number-section mt-3" id="monero-section" style="display: none;">
-                        <label class="form-label fw-bold"><i class="fab fa-monero me-1"></i>{{ form.monero_address.label }}</label>
-                        {{ form.monero_address }}
-                        {% if form.monero_address.errors %}
-                        <div class="text-danger small mt-1">{{ form.monero_address.errors.0 }}</div>
-                        {% endif %}
-                        <p class="small mt-1 mb-0" style="color: var(--gray-500);">{{ form.monero_address.help_text }}</p>
+                    <!-- Info Moneroo -->
+                    <div class="mt-3 p-3 rounded-3" id="moneroo-info" style="display: none; background: linear-gradient(135deg, #EEF2FF, #F5F3FF); border: 1px solid #C7D2FE;">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-shield-alt me-2" style="color: var(--primary); font-size: 1.2rem;"></i>
+                            <div>
+                                <p class="mb-0 small fw-bold" style="color: var(--primary-dark);">Paiement sécurisé via Moneroo</p>
+                                <p class="mb-0 small" style="color: var(--gray-500);">Vous serez redirigé vers une page de paiement sécurisée pour choisir votre opérateur mobile.</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -103,8 +103,8 @@
             </div>
             {% endif %}
 
-            <button type="submit" class="btn btn-primary btn-lg w-100">
-                <i class="fas fa-check-circle me-2"></i>Confirmer la commande — {{ cart.total|floatformat:0 }} FC
+            <button type="submit" class="btn btn-primary btn-lg w-100" id="checkout-btn">
+                <i class="fas fa-check-circle me-2"></i><span id="btn-text">Confirmer la commande — {{ cart.total|floatformat:0 }} FC</span>
             </button>
         </form>
     </div>
@@ -138,16 +138,21 @@
 document.addEventListener('DOMContentLoaded', function() {
     const radios = document.querySelectorAll('input[name="payment_method"]');
     const mobileSection = document.getElementById('mobile-number-section');
-    const moneroSection = document.getElementById('monero-section');
-    const mobileMethods = ['mpesa', 'airtel_money', 'orange_money', 'afrimoney'];
+    const monerooInfo = document.getElementById('moneroo-info');
+    const btnText = document.getElementById('btn-text');
+    const total = '{{ cart.total|floatformat:0 }}';
 
     function updatePaymentUI() {
         document.querySelectorAll('.payment-option').forEach(el => el.classList.remove('active'));
         radios.forEach(radio => {
             if (radio.checked) {
                 radio.closest('.payment-option').classList.add('active');
-                mobileSection.style.display = mobileMethods.includes(radio.value) ? 'block' : 'none';
-                moneroSection.style.display = radio.value === 'monero' ? 'block' : 'none';
+                const isMobile = radio.value === 'mobile_money';
+                mobileSection.style.display = isMobile ? 'block' : 'none';
+                monerooInfo.style.display = isMobile ? 'block' : 'none';
+                btnText.textContent = isMobile
+                    ? 'Payer ' + total + ' FC via Mobile Money'
+                    : 'Confirmer la commande — ' + total + ' FC';
             }
         });
     }

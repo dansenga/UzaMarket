@@ -2,19 +2,21 @@
    UzaMarket — JavaScript principal
    =========================================== */
 
-document.addEventListener('DOMContentLoaded', function () {
-
-    // ── Preloader ──────────────────────────
-    const preloader = document.getElementById('preloader');
+// ── Preloader (hors DOMContentLoaded pour se déclencher dès que possible) ──
+(function () {
+    var preloader = document.getElementById('preloader');
     if (preloader) {
         window.addEventListener('load', function () {
             preloader.classList.add('loaded');
         });
-        // Fallback : retire le preloader après 3s max
+        // Fallback : retire le preloader après 1.5s max
         setTimeout(function () {
-            preloader.classList.add('loaded');
-        }, 3000);
+            if (preloader) preloader.classList.add('loaded');
+        }, 1500);
     }
+})();
+
+document.addEventListener('DOMContentLoaded', function () {
 
     // ── Navbar scroll effect ───────────────
     const navbar = document.querySelector('.navbar-uzashop');
@@ -64,9 +66,6 @@ document.addEventListener('DOMContentLoaded', function () {
     const productCards = document.querySelectorAll('.product-card');
     productCards.forEach(function (card, index) {
         card.style.animationDelay = (index * 0.08) + 's';
-        card.style.opacity = '0';
-        card.style.animation = 'cardFadeIn 0.5s ease forwards';
-        card.style.animationDelay = (index * 0.08) + 's';
     });
 
     // ── HTMX cart badge bounce ─────────────
@@ -91,7 +90,4 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 });
 
-/* Card fade-in keyframe */
-var styleSheet = document.createElement('style');
-styleSheet.textContent = '@keyframes cardFadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }';
-document.head.appendChild(styleSheet);
+/* Animation cardFadeIn déplacée dans style.css */

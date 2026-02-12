@@ -9,6 +9,7 @@ class Order(models.Model):
 
     class Status(models.TextChoices):
         PENDING = "pending", "En attente"
+        AWAITING_PAYMENT = "awaiting_payment", "En attente de paiement"
         CONFIRMED = "confirmed", "Confirmée"
         PROCESSING = "processing", "En préparation"
         SHIPPED = "shipped", "Expédiée"
@@ -23,7 +24,7 @@ class Order(models.Model):
         verbose_name="Acheteur",
     )
     status = models.CharField(
-        max_length=15,
+        max_length=20,
         choices=Status.choices,
         default=Status.PENDING,
         verbose_name="Statut",
@@ -34,6 +35,9 @@ class Order(models.Model):
     mobile_number = models.CharField(max_length=25, blank=True, verbose_name="Numéro Mobile Money")
     is_paid = models.BooleanField(default=False, verbose_name="Payée")
     payment_method = models.CharField(max_length=50, blank=True, verbose_name="Méthode de paiement")
+    # Moneroo
+    moneroo_payment_id = models.CharField(max_length=100, blank=True, verbose_name="ID Moneroo")
+    moneroo_checkout_url = models.URLField(blank=True, verbose_name="URL de paiement Moneroo")
     notes = models.TextField(blank=True, verbose_name="Notes")
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)

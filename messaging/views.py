@@ -22,6 +22,11 @@ def inbox(request):
         )
         .order_by("-last_msg_time")
     )
+
+    # Pré-calculer l'autre participant (impossible d'appeler une méthode avec arg dans le template)
+    for conv in conversations:
+        conv.other_participant = conv.get_other_participant(request.user)
+
     # Nombre total de messages non lus
     total_unread = sum(c.unread for c in conversations)
     return render(request, "messaging/inbox.html", {

@@ -6,18 +6,38 @@
 <div class="row justify-content-center">
     <div class="col-md-8 text-center">
         <div class="card border-0 shadow-sm p-5">
+            {% if order.is_paid %}
+            <div class="confirmation-icon mx-auto" style="color: #22C55E;">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2 class="mb-3" style="color: var(--dark);">Paiement reçu !</h2>
+            <p class="lead" style="color: var(--gray-500);">Votre paiement Mobile Money a été confirmé.</p>
+            {% else %}
             <div class="confirmation-icon mx-auto">
                 <i class="fas fa-check-circle"></i>
             </div>
             <h2 class="mb-3" style="color: var(--dark);">Commande confirmée !</h2>
-            <p class="lead" style="color: var(--gray-500);">Merci pour votre commande. Votre numéro est :</p>
+            <p class="lead" style="color: var(--gray-500);">Merci pour votre commande.</p>
+            {% endif %}
+
             <h3 class="fw-bold mb-4" style="color: var(--primary);">{{ order.order_number }}</h3>
 
             <div class="card border-0 p-3 mb-4 text-start" style="background: var(--gray-100); border-radius: var(--radius-lg);">
                 <div class="row g-3">
                     <div class="col-md-6">
-                        <p class="mb-1"><strong>Statut :</strong> {{ order.get_status_display }}</p>
-                        <p class="mb-1"><strong>Paiement :</strong> {{ order.get_payment_method_display|default:order.payment_method }}</p>
+                        <p class="mb-1"><strong>Statut :</strong>
+                            <span class="badge bg-{% if order.status == 'confirmed' %}success{% elif order.status == 'awaiting_payment' %}warning{% else %}secondary{% endif %}">
+                                {{ order.get_status_display }}
+                            </span>
+                        </p>
+                        <p class="mb-1"><strong>Paiement :</strong>
+                            {% if order.payment_method == 'mobile_money' %}
+                            <i class="fas fa-mobile-alt me-1"></i>Mobile Money (Moneroo)
+                            {% if order.is_paid %}<span class="badge bg-success ms-1">Payé</span>{% endif %}
+                            {% else %}
+                            <i class="fas fa-money-bill-wave me-1"></i>À la livraison
+                            {% endif %}
+                        </p>
                         <p class="mb-0"><strong>Total :</strong> <span class="price-tag">{{ order.total_amount|floatformat:0 }} <span class="currency">FC</span></span></p>
                     </div>
                     <div class="col-md-6">
