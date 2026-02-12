@@ -84,7 +84,7 @@ cd UzaMarket
 # Créer et activer l'environnement virtuel
 python -m venv venv
 source venv/bin/activate  # Linux/Mac
-# venv\Scripts\activate   # Windows
+venv\Scripts\activate   # Windows
 
 # Installer les dépendances
 pip install django django-htmx pillow requests
