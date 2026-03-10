@@ -19,9 +19,16 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings
 from django.conf.urls.static import static
+from django.views.static import serve
+import os
 
 urlpatterns = [
     path("admin/", admin.site.urls),
+    # PWA Service Worker (doit être servi depuis la racine)
+    path("sw.js", serve, {
+        "path": "sw.js",
+        "document_root": os.path.join(settings.BASE_DIR, "static"),
+    }, name="service-worker"),
     path("", include("core.urls")),
     path("compte/", include("accounts.urls")),
     path("produits/", include("products.urls")),
